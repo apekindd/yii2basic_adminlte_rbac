@@ -10,8 +10,6 @@ $this->title = $model->username;
 $this->params['breadcrumbs'][] = ['label' => 'Users', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<?php echo '<pre>';var_dump(Yii::$app->user->can('god')); echo '</pre>';?>
-<?php echo '<pre>';var_dump(Yii::$app->user->can('test')); echo '</pre>';?>
 <div class="user-view">
 
 
