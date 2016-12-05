@@ -9,7 +9,9 @@ class m161205_123651_add_admin_user extends Migration
         $this->insert('user',[
             'id' => 1,
             'username' => 'admin',
-            'password' => Yii::$app->security->generatePasswordHash('admin'),
+            'password_hash' => Yii::$app->security->generatePasswordHash('admin'),
+            'created_at' => time(),
+            'updated_at' => time(),
         ]);
     }
 
