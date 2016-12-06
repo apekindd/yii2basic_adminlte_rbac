@@ -23,6 +23,23 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             //'type',
             'description:ntext',
+            [
+                'attribute'=>'Permissions',
+                'value' => function($model){
+                    $res = "";
+                    $children = \yii\helpers\ArrayHelper::map($model->children, "name", "name");
+                    foreach ($model->perms as $perm){
+                        if($children[$perm->name] === $perm->name){
+                            $res .= $perm->name."<br/>";
+                        }
+                    }
+                    if($res == ''){
+                        $res = " - ";
+                    }
+                    return $res;
+                },
+                'format'=>'html'
+            ],
             //'rule_name',
             //'data:ntext',
             // 'created_at',
