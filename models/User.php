@@ -39,6 +39,11 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
         return static::findOne(['username'=>$username]);
     }
 
+    public static function findByEmail($email)
+    {
+        return static::findOne(['email'=>$email]);
+    }
+
     /**
      * @inheritdoc
      */
@@ -86,6 +91,6 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
      */
     public function setPassword($password)
     {
-        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+        $this->password_hash = \Yii::$app->security->generatePasswordHash($password);
     }
 }

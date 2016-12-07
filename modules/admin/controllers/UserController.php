@@ -54,10 +54,30 @@ class UserController extends Controller
     {
         $model = new User();
         if ($model->load(Yii::$app->request->post())) {
-            $cu = new CommonUser();
-            $cu->setPassword($model->password_hash);
-            $model->password_hash = $cu->password_hash;
-            unset($cu);
+            if(CommonUser::findByUsername($model->username) !== NULL){
+                Yii::$app->session->setFlash('error',"Пользователь с именем {$model->username} уже существует");
+                return $this->redirect(Yii::$app->request->referrer);
+            }
+            if(CommonUser::findByEmail($model->email) !== NULL){
+                Yii::$app->session->setFlash('error',"Пользователь с email {$model->email} уже существует");
+                return $this->redirect(Yii::$app->request->referrer);
+            }
+            if($model->password == '' && $model->password_repeat == ''){
+                Yii::$app->session->setFlash('error','Вы не заполнили поле "Новый пароль" и "Подтверждение нового пароля"');
+                return $this->redirect(Yii::$app->request->referrer);
+            }
+
+
+            if($model->password === $model->password_repeat){
+                $cu = new CommonUser();
+                $cu->setPassword($model->password);
+                $model->password_hash = $cu->password_hash;
+                unset($cu);
+            }else{
+                Yii::$app->session->setFlash('error','Введенные Вами пароли не совпадают');
+                return $this->redirect(Yii::$app->request->referrer);
+            }
+
             if($model->save()){
                 //add roles
                 $postRole = Yii::$app->request->post("Role");
@@ -92,6 +112,20 @@ class UserController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
 
+            if($model->oldAttributes['username'] != $model->username){
+                if(CommonUser::findByUsername($model->username) !== NULL){
+                    Yii::$app->session->setFlash('error',"Пользователь с именем {$model->username} уже существует");
+                    return $this->redirect(Yii::$app->request->referrer);
+                }
+            }
+
+            if($model->oldAttributes['email'] != $model->email) {
+                if (CommonUser::findByEmail($model->email) !== NULL) {
+                    Yii::$app->session->setFlash('error', "Пользователь с email {$model->email} уже существует");
+                    return $this->redirect(Yii::$app->request->referrer);
+                }
+            }
+
             $hisRoles = AuthAssignment::find()->where(['=','user_id', $model->id])->asArray()->indexBy('item_name')->all();
             $postRole = Yii::$app->request->post("Role");
             //check for delete
@@ -116,13 +150,12 @@ class UserController extends Controller
                     }
                 }
             }
-
-            $cu = new CommonUser();
-            if($model->oldAttributes['password_hash'] !== $model->password_hash){
-                $cu->setPassword($model->password_hash);
+            if(($model->password != '' && $model->password_repeat != '') && ($model->password === $model->password_repeat)){
+                $cu = new CommonUser();
+                $cu->setPassword($model->password);
                 $model->password_hash = $cu->password_hash;
+                unset($cu);
             }
-            unset($cu);
             if($model->save()){
                 return $this->redirect(['view', 'id' => $model->id]);
             }

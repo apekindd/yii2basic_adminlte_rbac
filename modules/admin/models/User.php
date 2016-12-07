@@ -7,19 +7,13 @@ use yii\behaviors\TimestampBehavior;
 use yii\rbac\Item;
 
 
-/**
- * This is the model class for table "user".
- *
- * @property integer $id
- * @property string $username
- * @property string $auth_key
- * @property string $password_hash
- * @property string $email
- * @property integer $created_at
- * @property integer $updated_at
- */
+
 class User extends \yii\db\ActiveRecord
 {
+
+    public  $password;
+    public  $password_repeat;
+
     /**
      * @inheritdoc
      */
@@ -73,6 +67,9 @@ class User extends \yii\db\ActiveRecord
             [['auth_key'], 'string', 'max' => 32],
             [['username'], 'unique'],
             [['email'], 'unique'],
+            [['email'], 'email'],
+            [['password', 'password_repeat'], 'string', 'min' => 6],
+            ['password_repeat', 'compare', 'compareAttribute'=>'password', 'message'=>"Passwords don't match" ],
         ];
     }
 
@@ -89,6 +86,8 @@ class User extends \yii\db\ActiveRecord
             'email' => 'Email',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'password_repeat' => 'Подтверждение нового пароля',
+            'password' => 'Новый пароль',
         ];
     }
 }
