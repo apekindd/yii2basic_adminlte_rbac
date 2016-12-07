@@ -16,13 +16,20 @@ use yii\helpers\Html;
         </a>
         <ul class="nav navbar-nav" style="float:right">
             <li class="dropdown" >
-        <?php echo Html::beginForm(['/site/logout'], 'post')
+                <a><?= Yii::$app->user->identity->username ?></a>
+                <?php /*echo Html::beginForm(['/site/logout'], 'post')
         . Html::submitButton(
         'Logout (' . Yii::$app->user->identity->username . ')',
         ['class' => 'btn btn-link logout']
         )
-        . Html::endForm()?>
-                    </li>
+        . Html::endForm()*/?>
+            </li>
+
+            <li class="hidden-xxs">
+                <a href="<?= \yii\helpers\Url::to(['/site/logout']) ?>" class="btn">
+                    <i class="fa fa-power-off"></i>
+                </a>
+            </li>
             </ul>
     </nav>
 </header>
